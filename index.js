@@ -22,18 +22,18 @@ function processCommand(receivedMessage) {
 
     let redDice = splitCommand[2];
     let extractRedDice = redDice.replace('r', ' '); //Remove 'r' at the end to isolate hunger dice 
-    
+
     let diffcuitly = splitCommand[3];
-    let extractreDiffcuitly = diffcuitly.replace('d', ' '); //Remove 'd' at the end to isolate diffcuitly dice 
+    let extractDiffcuitly = diffcuitly.replace('d', ' '); //Remove 'd' at the end to isolate diffcuitly dice 
 
     if (primaryCommand == "r") {
-        generateRoll(extractBlackDice, extractRedDice, receivedMessage, extractreDiffcuitly);
+        generateRoll(extractBlackDice, extractRedDice, receivedMessage, extractDiffcuitly);
     } else {
         receivedMessage.channel.send("I don't understand the command. Try /r 3b 5r 3d to roll");
     }
 }
 
-function generateRoll(blackDice, getHungryDice, receivedMessage, extractDiffcuitly) {
+function generateRoll(blackDice, redDice, receivedMessage, extractDiffcuitly) {
     let i;
     const success = 1;
     let blackCritSuccessCount = 0;
@@ -46,7 +46,9 @@ function generateRoll(blackDice, getHungryDice, receivedMessage, extractDiffcuit
     let hungerResultsArray = [];
     let messyCrit = false;
 
-    for (i = 0; i < blackDice; i++) {
+    let minusHungerDice = blackDice - redDice;
+
+    for (i = 0; i < minusHungerDice; i++) {
         let calcBlack = Math.floor(Math.random() * 10) + 1;
         blackDiceArray.push(calcBlack);
 
@@ -57,7 +59,7 @@ function generateRoll(blackDice, getHungryDice, receivedMessage, extractDiffcuit
         }
     }
 
-    for (i = 0; i < getHungryDice; i++) {
+    for (i = 0; i < redDice; i++) {
         let calcRed = Math.floor(Math.random() * 10) + 1;
         redDiceArray.push(calcRed);
 
@@ -137,25 +139,25 @@ function generateRoll(blackDice, getHungryDice, receivedMessage, extractDiffcuit
 
     let totalSuccess = blackSuccess + redSuccess;
 
-    for (i = 0; i < blackDice; i++) {
+    for (i = 0; i < minusHungerDice; i++) {
         if (blackDiceArray[i] >= 6 && blackDiceArray[i] <= 10) {
-           checkResultsArray.push(" " +blackDiceArray[i]+ " ");
+            checkResultsArray.push(" " + blackDiceArray[i] + " ");
         } else {
-            checkResultsArray.push(" ~~"+blackDiceArray[i]+"~~ ");
+            checkResultsArray.push(" ~~" + blackDiceArray[i] + "~~ ");
         }
     }
 
-    for (i = 0; i < getHungryDice; i++) {
+    for (i = 0; i < redDice; i++) {
         if (redDiceArray[i] >= 6 && redDiceArray[i] <= 10) {
-            hungerResultsArray.push(" " +redDiceArray[i]+ " ");
+            hungerResultsArray.push(" " + redDiceArray[i] + " ");
         } else {
-            hungerResultsArray.push(" ~~"+redDiceArray[i]+"~~");
+            hungerResultsArray.push(" ~~" + redDiceArray[i] + "~~");
         }
     }
 
     if (totalSuccess >= extractDiffcuitly && messyCrit == false) {
-       receivedMessage.channel.send("Black Dice: " + checkResultsArray.toString());
-       receivedMessage.channel.send("Red Dice: " + hungerResultsArray.toString());
+        receivedMessage.channel.send("Black Dice: " + checkResultsArray.toString());
+        receivedMessage.channel.send("Red Dice: " + hungerResultsArray.toString());
         receivedMessage.channel.send("Total Successes: " + totalSuccess);
         receivedMessage.channel.send("```diff\n+Pass\n```");
     } else if (totalSuccess >= extractDiffcuitly && messyCrit == true) {
