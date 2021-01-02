@@ -2,11 +2,13 @@ require('dotenv').config();
 const Discord = require('discord.js')
 const client = new Discord.Client()
 
+//const config = require('./config.json');
+
 client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user) { // Prevent bot from responding to its own messages
         return
     } else if (receivedMessage.content.startsWith("/r")) {
-        processCommand(receivedMessage)
+        processCommand(receivedMessage);
     }
 })
 
@@ -28,21 +30,26 @@ function processCommand(receivedMessage) {
 }
 
 function generateRoll(blackDice, redDice, receivedMessage, extractDiffcuitly, whoRolled) {
-    let i;
     const success = 1;
+    let i;
     let blackSuccess = 0;
     let redSuccess = 0;
     let critSuccessCount = 0;
     let critSuccess = 0;
+    let minusHungerDice = 0;
     let blackDiceArray = []
     let redDiceArray = []
     let checkResultsArray = [];
     let hungerResultsArray = [];
     let redDiceCrit = false;
-    let blackDiceCrit = false;
     let totalSuccess;
 
-    let minusHungerDice = blackDice - redDice;
+    if (+redDice > +blackDice) {
+        redDice = blackDice;
+        minusHungerDice = 0;
+    } else {
+        minusHungerDice = blackDice - redDice;
+    }
 
     for (i = 0; i < minusHungerDice; i++) {
         let calcBlack = Math.floor(Math.random() * 10) + 1;
@@ -51,8 +58,7 @@ function generateRoll(blackDice, redDice, receivedMessage, extractDiffcuitly, wh
         if (calcBlack >= 6 && calcBlack <= 9) {
             blackSuccess = blackSuccess + success;
         } else if (calcBlack === 10) {
-            blackDiceCrit = true;
-            critSuccessCount = critSuccessCount + success
+            critSuccessCount = critSuccessCount + success;
         }
     }
 
@@ -64,40 +70,31 @@ function generateRoll(blackDice, redDice, receivedMessage, extractDiffcuitly, wh
             redSuccess = redSuccess + success;
         } else if (calcRed === 10) {
             redDiceCrit = true;
-            critSuccessCount = critSuccessCount + success
+            critSuccessCount = critSuccessCount + success;
         }
     }
 
     switch (critSuccessCount) {
         case 1:
-            critSuccess = critSuccess + 1;
+            critSuccess = 1;
             break;
         case 2:
-            critSuccess = critSuccess + 4;
+            critSuccess = 4;
             break;
         case 3:
-            critSuccess = critSuccess + 5;
+            critSuccess = 5;
             break;
         case 4:
-            critSuccess = critSuccess + 8;
+            critSuccess = 8;
             break;
         case 5:
-            critSuccess = critSuccess + 9;
+            critSuccess = 9;
             break;
         case 6:
-            critSuccess = critSuccess + 12;
+            critSuccess = 12;
             break;
         case 7:
-            critSuccess = critSuccess + 13;
-            break;
-        case 8:
-            critSuccess = critSuccess + 16;
-            break;
-        case 9:
-            critSuccess = critSuccess + 17;
-            break;
-        case 10:
-            CritSuccess = CritSuccess + 20;
+            critSuccess = 13;
             break;
     }
 
@@ -123,22 +120,12 @@ function generateRoll(blackDice, redDice, receivedMessage, extractDiffcuitly, wh
         }
     }
 
-    if (totalSuccess >= extractDiffcuitly && redDiceCrit == false && blackDiceCrit == false) {
-        receivedMessage.channel.send("Vampire: " + whoRolled + "\nBlack Dice: " +
-            checkResultsArray.toString() + "\nRed Dice: " +
-            hungerResultsArray.toString() + "\nTotal Successes: " +
-            totalSuccess + "\n```diff\n+Pass\n```");
-    } else if (totalSuccess >= extractDiffcuitly && redDiceCrit == true && critSuccess >= 2) {
+    if (totalSuccess >= extractDiffcuitly && redDiceCrit == true && critSuccessCount >= 2) {
         receivedMessage.channel.send("Vampire: " + whoRolled + "\nBlack Dice: " +
             checkResultsArray.toString() + "\nRed Dice: " +
             hungerResultsArray.toString() + "\nTotal Successes: " +
             totalSuccess + "\n```fix\nPass but its a messy crit\n```");
-    } else if (totalSuccess >= extractDiffcuitly && redDiceCrit == false && blackDiceCrit == true) {
-        receivedMessage.channel.send("Vampire: " + whoRolled + "\nBlack Dice: " +
-            checkResultsArray.toString() + "\nRed Dice: " +
-            hungerResultsArray.toString() + "\nTotal Successes: " +
-            totalSuccess + "\n```diff\n+Pass\n```");
-    } else if (totalSuccess >= extractDiffcuitly && redDiceCrit == true && blackDiceCrit == false) {
+    } else if (totalSuccess >= extractDiffcuitly) {
         receivedMessage.channel.send("Vampire: " + whoRolled + "\nBlack Dice: " +
             checkResultsArray.toString() + "\nRed Dice: " +
             hungerResultsArray.toString() + "\nTotal Successes: " +
@@ -157,3 +144,4 @@ function generateRoll(blackDice, redDice, receivedMessage, extractDiffcuitly, wh
 }
 
 client.login(process.env.token) // Bot token
+//client.login(config.token) // Bot token
