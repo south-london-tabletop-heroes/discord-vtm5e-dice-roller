@@ -19,7 +19,7 @@
     "heroku",
     "discord.js"
   ],
-  "author": "synicalsyntax",
+  "author": "South London Tabletop Heroes",
   "license": "MIT",
   "homepage": "https://github.com/south-london-tabletop-heroes/discord-vtm5e-dice-roller/blob/main/README.md",
   "dependencies": {
