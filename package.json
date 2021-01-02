@@ -1,5 +1,6 @@
 {
 "name": "vampire-masquerade-dice-bot",
+ "version": "1.0.0",
 "description": "Vampire Masquerade Dice Bot",
  "main": "index.js",
   "engines": {
@@ -12,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/synicalsyntax/discord.js-heroku.git"
+    "url": "git+https://github.com/south-london-tabletop-heroes/discord-vtm5e-dice-roller"
   },
   "keywords": [
     "heroku",
@@ -20,10 +21,7 @@
   ],
   "author": "synicalsyntax",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/synicalsyntax/discord.js-heroku/issues"
-  },
-  "homepage": "https://github.com/synicalsyntax/discord.js-heroku#readme",
+  "homepage": "https://github.com/south-london-tabletop-heroes/discord-vtm5e-dice-roller/blob/main/README.md",
   "dependencies": {
     "discord.js": "^11.3.0"
   }
